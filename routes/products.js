@@ -1181,8 +1181,9 @@ router.get('/', function (req, res, next) {
   result = result.splice(limit * (page - 1), limit)
   res.send(result);
 });
+
 //get by ID
-router.get('/:id', function (req, res, next) {
+router.get('/:id(\\d+)', function (req, res, next) {
   let result = data.find(
     function (e) {
       return e.id == req.params.id && (!e.isDeleted);
@@ -1192,7 +1193,24 @@ router.get('/:id', function (req, res, next) {
     res.send(result);
   } else {
     res.status(404).send({
-      "message": "id not found"
+      "message": "id not found to find by id"
+    });
+  }
+});
+
+//get by Slug
+router.get('/:slug', function (req, res, next) {
+  let result = data.find(
+    function(e){
+      return e.slug == req.params.slug;
+    }
+  )
+  if (result) {
+    res.send(result);
+  }
+  else{
+    res.status(404).send({
+      "message": "slug not found"
     });
   }
 });
@@ -1215,6 +1233,7 @@ router.post('/', function (req, res, next) {
   res.send(newObj);
   //console.log(g);
 })
+
 router.put('/:id', function (req, res, next) {
   let id = req.params.id;
   let result = data.find(
@@ -1232,10 +1251,11 @@ router.put('/:id', function (req, res, next) {
     res.send(result);
   } else {
     res.status(404).send({
-      "message": "id not found"
+      "message": "id not found to put"
     });
   }
 })
+
 router.delete('/:id', function (req, res, next) {
   let id = req.params.id;
   let result = data.find(
@@ -1248,7 +1268,7 @@ router.delete('/:id', function (req, res, next) {
     res.send(result)
   } else {
     res.status(404).send({
-      "message": "id not found"
+      "message": "id not found to delete"
     });
   }
 
