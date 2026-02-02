@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 let {ConvertTitleToSlug} = require('../utils/titleHandler')
 let {getMaxID} = require('../utils/IdHandler')
+let { isEmpty, isValidNumber } = require('../utils/emptyHandler') //Gọi Utils mới.
 let data = [
   {
     "id": 1,
@@ -1217,14 +1218,30 @@ router.get('/:slug', function (req, res, next) {
 
 
 router.post('/', function (req, res, next) {
+  //Thêm mới: Đoạn Validation
+  let { title, price, description, category, images } = req.body;
+  let errors = [];
+  if (isEmpty(title)) {
+    errors.push("Title không được để trống");
+  }
+  if (!isValidNumber(price)) {
+    errors.push("Giá phải là số hợp lệ");
+  }
+  if (errors.length > 0) {
+    res.status(400).send({
+      "message": "Dữ liệu không hợp lệ",
+      "errors": errors
+    });
+    return;
+  }
   let newObj = {
     id: (getMaxID(data) + 1) + '',
-    title: req.body.title,
-    slug: ConvertTitleToSlug(req.body.title),
-    price: req.body.price,
-    description: req.body.description,
-    category: req.body.category,
-    images: req.body.images,
+    title: title.trim(),
+    slug: ConvertTitleToSlug(title.trim()),
+    price: Number(price),
+    description: description,
+    category: category,
+    images: images,
     creationAt: new Date(Date.now()),
     updatedAt: new Date(Date.now())
   }
