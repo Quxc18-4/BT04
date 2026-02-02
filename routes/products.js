@@ -1173,6 +1173,16 @@ router.get('/', function (req, res, next) {
   let page = queries.page ? queries.page : 1;
   let limit = queries.limit ? queries.limit : 10;
   console.log(queries);
+  if (minPrice > maxPrice) {
+    res.status(400).send({
+      "message": "Giá đỉnh thấp hơn giá đáy"
+    });
+  }
+  if (page <= 0 || limit <= 0) {
+    res.status(400).send({
+      "message": "Phân trang hoặc giới hạn không hợp lệ"
+    });
+  }
   let result = data.filter(
     function (e) {
       return (!e.isDeleted) && e.title.includes(titleQ) &&
