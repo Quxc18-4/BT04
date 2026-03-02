@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const mongoose = require('mongoose');
 
 
 
@@ -17,6 +18,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+mongoose.connect('mongodb://127.0.0.1:27017/MongoDBTest');
+mongoose.connection.on('Connected', function () {
+  console.log('Ket noi thanh cong');
+});
 
 //localhost:3000
 app.use('/', require('./routes/index'));
